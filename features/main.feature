@@ -1,4 +1,4 @@
-@fixture.set_up_testing_db
+@fixture.setup.testing.db
 Feature: List the menus
   Scenario: Display the existing menus
     When I ask for the list of menus

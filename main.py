@@ -1,20 +1,15 @@
-from pony.orm import select, sql_debug
+from pony.orm import select
 
 import click
 
-from models import db, Menu
-
-
-def create_database(db_name):
-    sql_debug(True)
-    db.bind(provider='sqlite', filename=db_name, create_db=True)
-    db.generate_mapping(create_tables=True)
+from models import Menu, create_database
 
 
 @click.command()
 def show_menu():
     menus = select(m for m in Menu)
-    pass
+
+    return menus
 
 
 if __name__ == '__main__':

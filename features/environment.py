@@ -1,9 +1,16 @@
-import pytest
-from behave import fixture
+from behave import fixture, use_fixture
 
-from main import create_database
+from models import create_database
+
 
 @fixture
-def set_up_testing_db():
-    pytest.set_trace()
-    create_database(':memory:')
+def setup_testing_db(context):
+    return create_database(':memory:')
+
+
+def before_tag(context, tag):
+    fixtures = {
+        'fixture.setup.testing.db': setup_testing_db
+    }
+
+    return use_fixture(fixtures[tag], context)

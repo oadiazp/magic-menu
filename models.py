@@ -1,4 +1,4 @@
-from pony.orm import Database, Required, Set
+from pony.orm import Database, Required, Set, sql_debug
 
 db = Database()
 
@@ -23,3 +23,10 @@ class Menu(db.Entity):
     path = Required(str)
 
     actions = Set(Action)
+
+def create_database(db_name):
+    sql_debug(True)
+    db.bind(provider='sqlite', filename=db_name, create_db=True)
+    db.generate_mapping(create_tables=True)
+
+    return db
