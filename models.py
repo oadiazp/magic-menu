@@ -1,4 +1,4 @@
-from pony.orm import Database, Required, Set, sql_debug
+from pony.orm import Database, Required, Set, sql_debug, Optional
 
 db = Database()
 
@@ -20,7 +20,7 @@ class Action(db.Entity):
 class Menu(db.Entity):
     name = Required(str)
     global_ = Required(bool)
-    path = Required(str)
+    path = Optional(str)
 
     actions = Set(Action)
 
