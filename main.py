@@ -1,15 +1,10 @@
-from pony.orm import select
-
-import click
+from pony.orm import select, db_session
 
 from models import Menu, create_database
 
-
-@click.command()
+@db_session
 def show_menu():
-    menus = select(m for m in Menu)
-
-    return menus
+    return [r for r in select(m for m in Menu)]
 
 
 if __name__ == '__main__':

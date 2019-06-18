@@ -1,4 +1,5 @@
-from behave import fixture, use_fixture
+from behave import fixture
+from behave.fixture import use_fixture_by_tag
 
 from models import create_database
 
@@ -9,8 +10,9 @@ def setup_testing_db(context):
 
 
 def before_tag(context, tag):
-    fixtures = {
-        'fixture.setup.testing.db': setup_testing_db
-    }
+    if tag.startswith('fixture'):
+        fixtures = {
+            'fixture.setup.testing.db': setup_testing_db
+        }
 
-    return use_fixture(fixtures[tag], context)
+        return use_fixture_by_tag(tag, context, fixtures)
