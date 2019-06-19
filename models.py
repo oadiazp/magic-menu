@@ -23,6 +23,11 @@ class Menu(db.Entity):
     path = Optional(str)
 
     actions = Set(Action)
+    submenus = Set('Menu', reverse='submenus')
+
+    def __str__(self):
+        return self.name
+
 
 def create_database(db_name):
     sql_debug(True)

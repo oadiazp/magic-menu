@@ -4,7 +4,7 @@ from models import Menu, create_database
 
 @db_session
 def show_menu():
-    return [r for r in select(m for m in Menu)]
+    return [str(r) for r in select(m for m in Menu)]
 
 
 if __name__ == '__main__':
