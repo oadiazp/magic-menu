@@ -23,6 +23,7 @@ class Menu(db.Entity):
     path = Optional(str)
 
     actions = Set(Action)
+    parent = Optional('Menu', reverse='parent')
     submenus = Set('Menu', reverse='submenus')
 
     def __str__(self):

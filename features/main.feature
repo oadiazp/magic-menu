@@ -6,5 +6,8 @@ Feature: List the menus
 
   Scenario: Create a menu with submenus
     When I add a submenu to a menu
-    Then The dict should contain a key called submenus
-#    And The submenu should have its options
+    Then There is a submenu
+    
+  Scenario: Get a dict for the root level
+    When I ask for <string>
+

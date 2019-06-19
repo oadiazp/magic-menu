@@ -1,7 +1,7 @@
 import pytest
 from behave import *
+from pony.orm import db_session
 
-from main import add_a_submenu
 from models import Menu
 
 use_step_matcher("parse")
@@ -12,12 +12,17 @@ def step_impl(context):
     """
     :type context: behave.runner.Context
     """
-    context.menu = add_a_submenu(Menu[1], Menu(name='Submenu', global_=False))
+
+    with db_session:
+        menu = Menu[1]
+        menu.submenus.add(Menu(name='Create a menu', global_=True))
 
 
-@then("The dict should contain a key called submenus")
+@then("There is a submenu")
 def step_impl(context):
     """
     :type context: behave.runner.Context
     """
-    pytest.set_trace()
+    with db_session:
+        menu = Menu[1]
+        assert menu.submenus.count() > 0
