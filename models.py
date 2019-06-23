@@ -1,5 +1,13 @@
-from pony.orm import Database, Required, Set, sql_debug, Optional, select, \
-    db_session
+import pytest
+from pony.orm import (
+    Database,
+    Required,
+    Set,
+    sql_debug,
+    Optional,
+    select,
+    db_session,
+    count)
 
 db = Database()
 
@@ -22,46 +30,47 @@ class Menu(db.Entity):
     name = Required(str)
     global_ = Required(bool)
     path = Optional(str)
+    parent = Optional(int)
+    command = Optional(str)
 
     actions = Set(Action)
-    parent = Optional('Menu', reverse='parent')
-    submenus = Set('Menu', reverse='submenus')
 
     def __str__(self):
         return self.name
 
-    def get_menu_dict(self):
+    def get_menu_dict(self, menus):
         return {
             'type': 'expand',
             'message': 'Choice an option: ',
             'name': 'option',
             'default': '1',
-            'choices': self.array_menu()
+            'choices': self.array_menu(menus)
         }
 
-    def array_menu(self):
-        with db_session:
-            silibings = select(
-                m for m in Menu if m.parent == self.parent
-            )
+    @db_session
+    def has_children(self):
+        parent = self.id
 
-        amount = len(silibings)
-        numbered_dict = zip(range(amount), silibings)
+        return count(m for m in Menu if m.parent == parent) > 0
+
+    def array_menu(self, menus):
+        if not isinstance(menus, list):
+            menus = [menus]
+
+        amount = len(menus)
+        numbered_dict = zip(range(amount), menus)
 
         return [
             {
                 'key': str(index),
-                'name': silibing.name,
-                'value': silibing
-            } for index, silibing in numbered_dict
+                'name': menu.name,
+                'value': menu
+            } for index, menu in numbered_dict
         ]
 
 
-
-
-
 def create_database(db_name):
-    sql_debug(True)
+    sql_debug(False)
     db.bind(provider='sqlite', filename=db_name, create_db=True)
     db.generate_mapping(create_tables=True)
 

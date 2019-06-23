@@ -1,6 +1,5 @@
-import pytest
 from behave import *
-from pony.orm import db_session
+from pony.orm import db_session, count
 
 from models import Menu
 
@@ -15,7 +14,9 @@ def step_impl(context):
 
     with db_session:
         menu = Menu[1]
-        menu.submenus.add(Menu(name='Create a menu', global_=True))
+        Menu(name='Create a menu', global_=True, parent=menu.id)
+        Menu(name='Update a menu', global_=True, parent=menu.id)
+        Menu(name='Delete a menu', global_=True, parent=menu.id)
 
 
 @then("There is a submenu")
@@ -25,4 +26,5 @@ def step_impl(context):
     """
     with db_session:
         menu = Menu[1]
-        assert menu.submenus.count() > 0
+        amount = count(m for m in Menu if m.parent == menu.id)
+        assert amount == 3, 'Amount: {}'.format(amount)
