@@ -1,3 +1,5 @@
+import os
+
 import pytest
 from pony.orm import (
     Database,
@@ -38,14 +40,9 @@ class Menu(db.Entity):
     def __str__(self):
         return self.name
 
-    def get_menu_dict(self, menus):
-        return {
-            'type': 'expand',
-            'message': 'Choice an option: ',
-            'name': 'option',
-            'default': '1',
-            'choices': self.array_menu(menus)
-        }
+    @db_session
+    def children(self):
+        return select(m for m in Menu if m.parent == self.id)
 
     @db_session
     def has_children(self):
@@ -53,23 +50,10 @@ class Menu(db.Entity):
 
         return count(m for m in Menu if m.parent == parent) > 0
 
-    def array_menu(self, menus):
-        if not isinstance(menus, list):
-            menus = [menus]
-
-        amount = len(menus)
-        numbered_dict = zip(range(amount), menus)
-
-        return [
-            {
-                'key': str(index),
-                'name': menu.name,
-                'value': menu
-            } for index, menu in numbered_dict
-        ]
-
 
 def create_database(db_name):
+    os.remove(db_name)
+
     sql_debug(False)
     db.bind(provider='sqlite', filename=db_name, create_db=True)
     db.generate_mapping(create_tables=True)

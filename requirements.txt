@@ -3,3 +3,4 @@ behave
 pytest
 requests
 jsonpath_rw
+PyInquirer
