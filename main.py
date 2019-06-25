@@ -40,7 +40,7 @@ def get_menu_dict(menus):
         'type': 'list',
         'message': 'Choice an option: ',
         'name': 'option',
-        'default': '1',
+        'default': '0',
         'choices': array_menu(menus)
     }
 
